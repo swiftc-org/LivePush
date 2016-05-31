@@ -11,7 +11,7 @@
 // 无麦克风权限的错误处理
 // 设置视频参数的类（e.g:视频方向，视频大小，帧率...）
 // 设置音频参数的类（也许用不上）
-
+// 跟踪这个错误：VTCompressionSessionCreate failed: Error Domain=VideoToolboxPlusError Code=-12912 "-12912" UserInfo={NSLocalizedDescription=-12912}
 
 import UIKit
 import MachO
