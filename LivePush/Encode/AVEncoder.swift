@@ -58,7 +58,7 @@ extension CMSampleBuffer {
     }
     
     var decodeTimeStamp: CMTime {
-        let decodeTimestamp:CMTime = CMSampleBufferGetDecodeTimeStamp(self)
+        let decodeTimestamp = CMSampleBufferGetDecodeTimeStamp(self)
         return decodeTimestamp == kCMTimeInvalid ? presentationTimeStamp : decodeTimestamp
     }
     
