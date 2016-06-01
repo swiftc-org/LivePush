@@ -11,11 +11,8 @@ import AudioToolbox
 
 final class AudioEncoder: NSObject {
     
-    private var audioQueue: AudioQueueRef!
-    
     override init() {
         super.init()
         
-        audioQueue =
     }
 }
