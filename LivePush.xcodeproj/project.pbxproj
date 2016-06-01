@@ -14,8 +14,10 @@
 		240FA2581CF7F7B90098F7FD /* AudioCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 240FA2551CF7F7B90098F7FD /* AudioCapture.swift */; };
 		240FA2591CF7F7B90098F7FD /* AVCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 240FA2561CF7F7B90098F7FD /* AVCapture.swift */; };
 		240FA25A1CF7F7B90098F7FD /* VideoCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 240FA2571CF7F7B90098F7FD /* VideoCapture.swift */; };
+		242B8FD11CFEE3F500D3A4EF /* UtilityTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242B8FD01CFEE3F500D3A4EF /* UtilityTool.swift */; };
 		243422CE1CFBD60300288841 /* VideoEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243422CD1CFBD60300288841 /* VideoEncoder.swift */; };
 		243422D01CFBE93C00288841 /* AVEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243422CF1CFBE93C00288841 /* AVEncoder.swift */; };
+		2451E9C71CFD330000EC3EE5 /* AudioEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2451E9C61CFD330000EC3EE5 /* AudioEncoder.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,8 +30,10 @@
 		240FA2551CF7F7B90098F7FD /* AudioCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioCapture.swift; sourceTree = "<group>"; };
 		240FA2561CF7F7B90098F7FD /* AVCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVCapture.swift; sourceTree = "<group>"; };
 		240FA2571CF7F7B90098F7FD /* VideoCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoCapture.swift; sourceTree = "<group>"; };
+		242B8FD01CFEE3F500D3A4EF /* UtilityTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityTool.swift; sourceTree = "<group>"; };
 		243422CD1CFBD60300288841 /* VideoEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoEncoder.swift; sourceTree = "<group>"; };
 		243422CF1CFBE93C00288841 /* AVEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVEncoder.swift; sourceTree = "<group>"; };
+		2451E9C61CFD330000EC3EE5 /* AudioEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioEncoder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +66,7 @@
 		240FA23F1CF7F77D0098F7FD /* LivePush */ = {
 			isa = PBXGroup;
 			children = (
+				242B8FCF1CFEE3F500D3A4EF /* UtilityTool */,
 				240FA25B1CF808450098F7FD /* Encode */,
 				240FA2541CF7F7B90098F7FD /* Capture */,
 				240FA2401CF7F77D0098F7FD /* AppDelegate.swift */,
@@ -87,9 +92,18 @@
 			isa = PBXGroup;
 			children = (
 				243422CF1CFBE93C00288841 /* AVEncoder.swift */,
+				2451E9C61CFD330000EC3EE5 /* AudioEncoder.swift */,
 				243422CD1CFBD60300288841 /* VideoEncoder.swift */,
 			);
 			path = Encode;
+			sourceTree = "<group>";
+		};
+		242B8FCF1CFEE3F500D3A4EF /* UtilityTool */ = {
+			isa = PBXGroup;
+			children = (
+				242B8FD01CFEE3F500D3A4EF /* UtilityTool.swift */,
+			);
+			path = UtilityTool;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -169,6 +183,8 @@
 				240FA2581CF7F7B90098F7FD /* AudioCapture.swift in Sources */,
 				243422CE1CFBD60300288841 /* VideoEncoder.swift in Sources */,
 				240FA2411CF7F77D0098F7FD /* AppDelegate.swift in Sources */,
+				2451E9C71CFD330000EC3EE5 /* AudioEncoder.swift in Sources */,
+				242B8FD11CFEE3F500D3A4EF /* UtilityTool.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

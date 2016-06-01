@@ -24,6 +24,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
+        if !isRunningOniOSDevice() {
+            fatalError("must be running on iOS device, because iOS simulator dont have a camera")
+        }
+        
         let vc = PushViewController()
         let nav = UINavigationController(rootViewController: vc)
         nav.setNavigationBarHidden(true, animated: true)
