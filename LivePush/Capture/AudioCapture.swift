@@ -17,6 +17,8 @@ final class AudioCapture: AVCapture {
         dispatch_set_target_queue(queue, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0))
         return queue
     }
+    
+    private var outputHandler: OutputHandler!
 
     override init() {
         super.init()
@@ -35,6 +37,13 @@ final class AudioCapture: AVCapture {
         if session.canAddOutput(audioOutput) {
             session.addOutput(audioOutput)
         }
+    }
+    
+    /// CMSampleBuffer data call back
+    func output(outputHandler: OutputHandler) {
+        
+        // the real call back must be on didOutputSampleBuffer
+        self.outputHandler = outputHandler
     }
     
 }
@@ -61,6 +70,7 @@ extension AudioCapture: AVCaptureAudioDataOutputSampleBufferDelegate {
     func captureOutput(captureOutput:AVCaptureOutput!, didOutputSampleBuffer
         sampleBuffer:CMSampleBuffer!, fromConnection connection:AVCaptureConnection!) {
         
-        //logger.info("\(sampleBuffer)")
+        guard outputHandler != nil else { return }
+        self.outputHandler(sampleBuffer: sampleBuffer!)
     }
 }

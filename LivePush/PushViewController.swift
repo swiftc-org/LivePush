@@ -14,7 +14,8 @@ class PushViewController: UIViewController {
     private let vCapture = VideoCapture()
     private let aCapture = AudioCapture()
     
-    private let vEncode = VideoEncoder()
+    private let vEncoder = VideoEncoder()
+    private let aEncoder = AudioEncoder()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,27 +31,38 @@ class PushViewController: UIViewController {
         
         vCapture.output { (sampleBuffer) in
             
-            self.handleSampleBuffer(sampleBuffer)
+            self.handleVideoSampleBuffer(sampleBuffer)
         }
         
         aCapture.startSession()
+        
+        aCapture.output { (sampleBuffer) in
+            
+            self.handleAudioSampleBuffer(sampleBuffer)
+        }
         
 //        performSelector(#selector(stopCapture),
 //                        withObject: nil,
 //                        afterDelay: 5.0)
     }
     
-    private func handleSampleBuffer(sampleBuffer: CMSampleBuffer) {
+    private func handleVideoSampleBuffer(sampleBuffer: CMSampleBuffer) {
         // TODO: some effect on here
         
         let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
         guard imageBuffer != nil else { return }
+        
         let timeStamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         let duration = CMSampleBufferGetDuration(sampleBuffer)
         
-        vEncode.encode(imageBuffer: imageBuffer!,
+        vEncoder.encode(imageBuffer: imageBuffer!,
                        presentationTimeStamp: timeStamp,
                        presentationDuration: duration)
+    }
+    
+    private func handleAudioSampleBuffer(sampleBuffer: CMSampleBuffer) {
+        
+        aEncoder.encode(sampleBuffer: sampleBuffer)
     }
     
     dynamic func stopCapture() {
