@@ -67,8 +67,8 @@ final class VideoEncoder: NSObject {
         return attrs
     }
     
-    private var callback: VTCompressionOutputCallback = {
-        (outputCallbackRefCon: UnsafeMutablePointer<Void>,
+    private var callback: VTCompressionOutputCallback = {(
+        outputCallbackRefCon: UnsafeMutablePointer<Void>,
         sourceFrameRefCon: UnsafeMutablePointer<Void>,
         status: OSStatus, infoFlags: VTEncodeInfoFlags,
         sampleBuffer: CMSampleBuffer?) in // parameters
@@ -136,11 +136,10 @@ final class VideoEncoder: NSObject {
         }
     }
     
-    // 
-    private func getEncodedData(sampleBuffer: CMSampleBuffer) -> NSData! {
+    private func getEncodedData(sampleBuffer: CMSampleBuffer) {
         
         let blockBuffer = CMSampleBufferGetDataBuffer(sampleBuffer)
-        guard blockBuffer != nil else { return nil }
+        guard blockBuffer != nil else { return }
         
         var totalLen = Int()
         var dataPointer: UnsafeMutablePointer<Int8> = nil
@@ -166,7 +165,7 @@ final class VideoEncoder: NSObject {
             let dis = CMTimeGetSeconds(dts) - CMTimeGetSeconds(videoTimeStamp)
             let delta = (videoTimeStamp == kCMTimeZero ? 0 : dis) * 1000
             
-            guard sampleBuffer.isKeyFrame != nil else { return nil }
+            guard sampleBuffer.isKeyFrame != nil else { return }
             // TODO: don't know why
             let tmp: UInt8 = ((sampleBuffer.isKeyFrame! ? 0x01 : 0x02) << 0x04) | 0x07
             
@@ -179,24 +178,19 @@ final class VideoEncoder: NSObject {
             buffer.appendBytes(&data, length: data.count)
             buffer.appendBytes(dataPointer, length: totalLen)
             
-            print("videoData: \(buffer)")
+            print("buffer.length: \(buffer.length)")
             print("timeStamp: \(delta)")
-            
             videoTimeStamp = dts
             
         } else {
-            return nil
+            return
         }
-        
-        return nil
     }
     
     // MARK: - Out interface
     
     override init() {
         super.init()
-        
-        print(#function)
         
         var onceToken = 0
         dispatch_once(&onceToken) {
