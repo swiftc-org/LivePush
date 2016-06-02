@@ -18,7 +18,6 @@
 		243422CE1CFBD60300288841 /* VideoEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243422CD1CFBD60300288841 /* VideoEncoder.swift */; };
 		243422D01CFBE93C00288841 /* AVEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243422CF1CFBE93C00288841 /* AVEncoder.swift */; };
 		2451E9C71CFD330000EC3EE5 /* AudioEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2451E9C61CFD330000EC3EE5 /* AudioEncoder.swift */; };
-		246545B71CFFE0B50046C96F /* AVMixer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 246545B61CFFE0B50046C96F /* AVMixer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,7 +34,6 @@
 		243422CD1CFBD60300288841 /* VideoEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoEncoder.swift; sourceTree = "<group>"; };
 		243422CF1CFBE93C00288841 /* AVEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVEncoder.swift; sourceTree = "<group>"; };
 		2451E9C61CFD330000EC3EE5 /* AudioEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioEncoder.swift; sourceTree = "<group>"; };
-		246545B61CFFE0B50046C96F /* AVMixer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AVMixer.swift; path = LivePush/Encode/AVMixer.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,7 +81,6 @@
 		240FA2541CF7F7B90098F7FD /* Capture */ = {
 			isa = PBXGroup;
 			children = (
-				246545B61CFFE0B50046C96F /* AVMixer.swift */,
 				240FA2561CF7F7B90098F7FD /* AVCapture.swift */,
 				240FA2551CF7F7B90098F7FD /* AudioCapture.swift */,
 				240FA2571CF7F7B90098F7FD /* VideoCapture.swift */,
@@ -179,7 +176,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				246545B71CFFE0B50046C96F /* AVMixer.swift in Sources */,
 				240FA2531CF7F7A70098F7FD /* PushViewController.swift in Sources */,
 				240FA25A1CF7F7B90098F7FD /* VideoCapture.swift in Sources */,
 				243422D01CFBE93C00288841 /* AVEncoder.swift in Sources */,
