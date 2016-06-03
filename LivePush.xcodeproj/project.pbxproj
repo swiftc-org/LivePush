@@ -14,6 +14,12 @@
 		240FA2581CF7F7B90098F7FD /* AudioCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 240FA2551CF7F7B90098F7FD /* AudioCapture.swift */; };
 		240FA2591CF7F7B90098F7FD /* AVCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 240FA2561CF7F7B90098F7FD /* AVCapture.swift */; };
 		240FA25A1CF7F7B90098F7FD /* VideoCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 240FA2571CF7F7B90098F7FD /* VideoCapture.swift */; };
+		2415AA1B1D0191F3000223BB /* amf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2415AA0C1D0191F3000223BB /* amf.c */; };
+		2415AA1C1D0191F3000223BB /* hashswf.c in Sources */ = {isa = PBXBuildFile; fileRef = 2415AA121D0191F3000223BB /* hashswf.c */; };
+		2415AA1D1D0191F3000223BB /* log.c in Sources */ = {isa = PBXBuildFile; fileRef = 2415AA141D0191F3000223BB /* log.c */; };
+		2415AA1E1D0191F3000223BB /* parseurl.c in Sources */ = {isa = PBXBuildFile; fileRef = 2415AA161D0191F3000223BB /* parseurl.c */; };
+		2415AA1F1D0191F3000223BB /* rtmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 2415AA171D0191F3000223BB /* rtmp.c */; };
+		2415AA201D0191F3000223BB /* RTMPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2415AA1A1D0191F3000223BB /* RTMPClient.swift */; };
 		242B8FD11CFEE3F500D3A4EF /* UtilityTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 242B8FD01CFEE3F500D3A4EF /* UtilityTool.swift */; };
 		243422CE1CFBD60300288841 /* VideoEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243422CD1CFBD60300288841 /* VideoEncoder.swift */; };
 		243422D01CFBE93C00288841 /* AVEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 243422CF1CFBE93C00288841 /* AVEncoder.swift */; };
@@ -30,6 +36,21 @@
 		240FA2551CF7F7B90098F7FD /* AudioCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioCapture.swift; sourceTree = "<group>"; };
 		240FA2561CF7F7B90098F7FD /* AVCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVCapture.swift; sourceTree = "<group>"; };
 		240FA2571CF7F7B90098F7FD /* VideoCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoCapture.swift; sourceTree = "<group>"; };
+		2415AA0C1D0191F3000223BB /* amf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = amf.c; sourceTree = "<group>"; };
+		2415AA0D1D0191F3000223BB /* amf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = amf.h; sourceTree = "<group>"; };
+		2415AA0E1D0191F3000223BB /* bytes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bytes.h; sourceTree = "<group>"; };
+		2415AA0F1D0191F3000223BB /* dh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dh.h; sourceTree = "<group>"; };
+		2415AA101D0191F3000223BB /* dhgroups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dhgroups.h; sourceTree = "<group>"; };
+		2415AA111D0191F3000223BB /* handshake.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = handshake.h; sourceTree = "<group>"; };
+		2415AA121D0191F3000223BB /* hashswf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hashswf.c; sourceTree = "<group>"; };
+		2415AA131D0191F3000223BB /* http.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = http.h; sourceTree = "<group>"; };
+		2415AA141D0191F3000223BB /* log.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = log.c; sourceTree = "<group>"; };
+		2415AA151D0191F3000223BB /* log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log.h; sourceTree = "<group>"; };
+		2415AA161D0191F3000223BB /* parseurl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = parseurl.c; sourceTree = "<group>"; };
+		2415AA171D0191F3000223BB /* rtmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = rtmp.c; sourceTree = "<group>"; };
+		2415AA181D0191F3000223BB /* rtmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtmp.h; sourceTree = "<group>"; };
+		2415AA191D0191F3000223BB /* rtmp_sys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtmp_sys.h; sourceTree = "<group>"; };
+		2415AA1A1D0191F3000223BB /* RTMPClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RTMPClient.swift; sourceTree = "<group>"; };
 		242B8FD01CFEE3F500D3A4EF /* UtilityTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UtilityTool.swift; sourceTree = "<group>"; };
 		243422CD1CFBD60300288841 /* VideoEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoEncoder.swift; sourceTree = "<group>"; };
 		243422CF1CFBE93C00288841 /* AVEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AVEncoder.swift; sourceTree = "<group>"; };
@@ -66,6 +87,7 @@
 		240FA23F1CF7F77D0098F7FD /* LivePush */ = {
 			isa = PBXGroup;
 			children = (
+				2415AA0B1D0191F3000223BB /* Rtmp */,
 				240FA25B1CF808450098F7FD /* Encode */,
 				240FA2541CF7F7B90098F7FD /* Capture */,
 				242B8FCF1CFEE3F500D3A4EF /* UtilityTool */,
@@ -96,6 +118,28 @@
 				243422CD1CFBD60300288841 /* VideoEncoder.swift */,
 			);
 			path = Encode;
+			sourceTree = "<group>";
+		};
+		2415AA0B1D0191F3000223BB /* Rtmp */ = {
+			isa = PBXGroup;
+			children = (
+				2415AA0C1D0191F3000223BB /* amf.c */,
+				2415AA0D1D0191F3000223BB /* amf.h */,
+				2415AA0E1D0191F3000223BB /* bytes.h */,
+				2415AA0F1D0191F3000223BB /* dh.h */,
+				2415AA101D0191F3000223BB /* dhgroups.h */,
+				2415AA111D0191F3000223BB /* handshake.h */,
+				2415AA121D0191F3000223BB /* hashswf.c */,
+				2415AA131D0191F3000223BB /* http.h */,
+				2415AA141D0191F3000223BB /* log.c */,
+				2415AA151D0191F3000223BB /* log.h */,
+				2415AA161D0191F3000223BB /* parseurl.c */,
+				2415AA171D0191F3000223BB /* rtmp.c */,
+				2415AA181D0191F3000223BB /* rtmp.h */,
+				2415AA191D0191F3000223BB /* rtmp_sys.h */,
+				2415AA1A1D0191F3000223BB /* RTMPClient.swift */,
+			);
+			path = Rtmp;
 			sourceTree = "<group>";
 		};
 		242B8FCF1CFEE3F500D3A4EF /* UtilityTool */ = {
@@ -138,6 +182,7 @@
 				TargetAttributes = {
 					240FA23C1CF7F77D0098F7FD = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = 58TBAPTS62;
 					};
 				};
 			};
@@ -176,11 +221,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2415AA1D1D0191F3000223BB /* log.c in Sources */,
+				2415AA1E1D0191F3000223BB /* parseurl.c in Sources */,
 				240FA2531CF7F7A70098F7FD /* PushViewController.swift in Sources */,
+				2415AA201D0191F3000223BB /* RTMPClient.swift in Sources */,
 				240FA25A1CF7F7B90098F7FD /* VideoCapture.swift in Sources */,
 				243422D01CFBE93C00288841 /* AVEncoder.swift in Sources */,
 				240FA2591CF7F7B90098F7FD /* AVCapture.swift in Sources */,
+				2415AA1B1D0191F3000223BB /* amf.c in Sources */,
 				240FA2581CF7F7B90098F7FD /* AudioCapture.swift in Sources */,
+				2415AA1F1D0191F3000223BB /* rtmp.c in Sources */,
+				2415AA1C1D0191F3000223BB /* hashswf.c in Sources */,
 				243422CE1CFBD60300288841 /* VideoEncoder.swift in Sources */,
 				240FA2411CF7F77D0098F7FD /* AppDelegate.swift in Sources */,
 				2451E9C71CFD330000EC3EE5 /* AudioEncoder.swift in Sources */,
@@ -289,11 +340,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = LivePush/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = swiftc.org.LivePush;
+				PRODUCT_BUNDLE_IDENTIFIER = org.swiftc.LivePush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = LivePush/Rtmp/rtmp.h;
 			};
 			name = Debug;
 		};
@@ -301,11 +356,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = LivePush/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = swiftc.org.LivePush;
+				PRODUCT_BUNDLE_IDENTIFIER = org.swiftc.LivePush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = LivePush/Rtmp/rtmp.h;
 			};
 			name = Release;
 		};
