@@ -9,7 +9,7 @@
 import UIKit
 import CoreMedia
 
-class PushViewController: UIViewController {
+class PushViewController: UIViewController, VideoEncoderDelegate {
 
     private let vCapture = VideoCapture()
     private let aCapture = AudioCapture()
@@ -55,9 +55,10 @@ class PushViewController: UIViewController {
         let timeStamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         let duration = CMSampleBufferGetDuration(sampleBuffer)
         
+        vEncoder.delegate = self
         vEncoder.encode(imageBuffer: imageBuffer!,
-                       presentationTimeStamp: timeStamp,
-                       presentationDuration: duration)
+                        presentationTimeStamp: timeStamp,
+                        presentationDuration: duration)
     }
     
     private func handleAudioSampleBuffer(sampleBuffer: CMSampleBuffer) {
@@ -68,6 +69,15 @@ class PushViewController: UIViewController {
     dynamic func stopCapture() {
         vCapture.stopSession()
         aCapture.stopSession()
+    }
+    
+    // MARK: - VideoEncoderDelegate
+    func onVideoEncoderGet(sps sps: NSData, pps: NSData) {
+        print(#function)
+    }
+    
+    func onVideoEncoderGet(video video: NSData, timeStamp: Double) {
+        print(#function)
     }
     
     override func didReceiveMemoryWarning() {

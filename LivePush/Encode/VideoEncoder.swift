@@ -91,8 +91,7 @@ final class VideoEncoder: NSObject {
             let sps = get_sps_or_pps(by: true, sampleBuffer: sampleBuffer)
             let pps = get_sps_or_pps(by: false, sampleBuffer: sampleBuffer)
             
-            print("sps:\(sps)")
-            print("pps:\(pps)")
+            delegate?.onVideoEncoderGet(sps: sps, pps: pps)
         }
         
         getEncodedData(sampleBuffer)
@@ -178,8 +177,7 @@ final class VideoEncoder: NSObject {
             buffer.appendBytes(&data, length: data.count)
             buffer.appendBytes(dataPointer, length: totalLen)
             
-            print("buffer.length: \(buffer.length)")
-            print("timeStamp: \(delta)")
+            delegate?.onVideoEncoderGet(video: buffer, timeStamp: delta)
             videoTimeStamp = dts
             
         } else {
@@ -218,4 +216,6 @@ final class VideoEncoder: NSObject {
                                         nil,
                                         &flags)
     }
+    
+    weak var delegate: VideoEncoderDelegate?
 }
