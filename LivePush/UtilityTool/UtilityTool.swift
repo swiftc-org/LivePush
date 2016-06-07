@@ -16,3 +16,76 @@ func isRunningOniOSDevice() -> Bool {
         return false
     #endif
 }
+
+func printHexOfPointer(ptr: UnsafePointer<Void>, length: Int) {
+    
+    for i in 0..<length {
+        
+        let uint8Ptr = UnsafePointer<UInt8>(ptr)
+        let m = uint8Ptr.advancedBy(i).memory
+        
+        var hexStr = String(m, radix: 16)
+        
+        if hexStr.characters.count == 1 {
+            hexStr = "0\(hexStr)"
+        }
+        
+        print(hexStr, terminator: "")
+        
+        if i != 0 && (i+1) % 4 == 0 {
+            print(" ", terminator: "")
+        }
+        
+        if i == length - 1 {
+            print("\n")
+        }
+    }
+}
+
+extension NSData {
+    
+    subscript(index: Int) -> UInt8 {
+        
+        let bytePtr = UnsafePointer<UInt8>(bytes)
+        let byte = bytePtr.advancedBy(index)
+        return byte.memory
+    }
+}
+
+extension String {
+    
+    var pointer: UnsafePointer<Int8> {
+        return withCString { (ptr) -> UnsafePointer<Int8> in
+            return ptr
+        }
+    }
+    
+    var mutablePointer: UnsafeMutablePointer<Int8> {
+        return withCString({ (ptr) -> UnsafeMutablePointer<Int8> in
+            return UnsafeMutablePointer(ptr)
+        })
+    }
+    
+    // It's right
+    var asciiString: UnsafePointer<Int8> {
+        return (self as NSString).cStringUsingEncoding(NSASCIIStringEncoding)
+    }
+    
+    /// It's wrong
+    var asciiStringII: UnsafePointer<Int8>? {
+        
+        guard canBeConvertedToEncoding(NSASCIIStringEncoding) else {
+            print("the string can not be converted by NSASCIIStringEncoding")
+            return nil
+        }
+        
+        let ccharArr = cStringUsingEncoding(NSASCIIStringEncoding)
+        guard ccharArr != nil else {
+            print("convert To NSASCIIStringEncoding failed")
+            return nil
+        }
+        
+        let ptr = UnsafePointer<Int8>.init(ccharArr!)
+        return ptr
+    }
+}
