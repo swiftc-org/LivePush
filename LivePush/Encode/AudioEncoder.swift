@@ -192,7 +192,7 @@ final class AudioEncoder: NSObject {
                                                            0,
                                                            &audioBufferList)
             
-            print("sampleb:\(sbuf!)")
+            //print("sampleb:\(sbuf!)")
         } else {
             print("AudioConverterFillComplexBuffer Failed")
         }
