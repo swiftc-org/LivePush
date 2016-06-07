@@ -88,10 +88,10 @@ final class VideoEncoder: NSObject {
         
         if keyFrame! {
             
-            let sps = get_sps_or_pps(by: true, sampleBuffer: sampleBuffer)
-            let pps = get_sps_or_pps(by: false, sampleBuffer: sampleBuffer)
+            sps = get_sps_or_pps(by: true, sampleBuffer: sampleBuffer)
+            pps = get_sps_or_pps(by: false, sampleBuffer: sampleBuffer)
             
-            delegate?.onVideoEncoderGet(sps: sps, pps: pps)
+            //delegate?.onVideoEncoderGet(sps: sps, pps: pps)
         }
         
         getEncodedData(sampleBuffer)
@@ -218,4 +218,6 @@ final class VideoEncoder: NSObject {
     }
     
     weak var delegate: VideoEncoderDelegate?
+    var sps: NSData?
+    var pps: NSData?
 }

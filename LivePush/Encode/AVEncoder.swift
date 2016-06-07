@@ -14,7 +14,6 @@ protocol AudioEncoderDelegate: class {
 }
 
 protocol VideoEncoderDelegate: class {
-    func onVideoEncoderGet(sps sps: NSData, pps: NSData)
     func onVideoEncoderGet(video video: NSData, timeStamp: Double)
 }
 
