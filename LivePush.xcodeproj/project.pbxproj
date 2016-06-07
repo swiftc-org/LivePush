@@ -182,7 +182,7 @@
 				TargetAttributes = {
 					240FA23C1CF7F77D0098F7FD = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = 58TBAPTS62;
+						DevelopmentTeam = P63H2K9NTR;
 					};
 				};
 			};
@@ -347,7 +347,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.swiftc.LivePush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "14ce10a9-07da-4f77-82c1-94824933e782";
 				SWIFT_OBJC_BRIDGING_HEADER = LivePush/Rtmp/rtmp.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -364,7 +364,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.swiftc.LivePush;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "14ce10a9-07da-4f77-82c1-94824933e782";
 				SWIFT_OBJC_BRIDGING_HEADER = LivePush/Rtmp/rtmp.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

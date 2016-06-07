@@ -44,12 +44,12 @@ typedef mpi * MP_t;
 #define MP_getbin(u,buf,len)	MP_new(u); mpi_read_binary(u,buf,len)
 
 typedef struct MDH {
-  MP_t p;
-  MP_t g;
-  MP_t pub_key;
-  MP_t priv_key;
-  long length;
-  dhm_context ctx;
+    MP_t p;
+    MP_t g;
+    MP_t pub_key;
+    MP_t priv_key;
+    long length;
+    dhm_context ctx;
 } MDH;
 
 #define MDH_new()	calloc(1,sizeof(MDH))
@@ -57,23 +57,23 @@ typedef struct MDH {
 
 static int MDH_generate_key(MDH *dh)
 {
-  unsigned char out[2];
-  MP_set(&dh->ctx.P, dh->p);
-  MP_set(&dh->ctx.G, dh->g);
-  dh->ctx.len = 128;
-  dhm_make_public(&dh->ctx, 1024, out, 1, havege_random, &RTMP_TLS_ctx->hs);
-  MP_new(dh->pub_key);
-  MP_new(dh->priv_key);
-  MP_set(dh->pub_key, &dh->ctx.GX);
-  MP_set(dh->priv_key, &dh->ctx.X);
-  return 1;
+    unsigned char out[2];
+    MP_set(&dh->ctx.P, dh->p);
+    MP_set(&dh->ctx.G, dh->g);
+    dh->ctx.len = 128;
+    dhm_make_public(&dh->ctx, 1024, out, 1, havege_random, &RTMP_TLS_ctx->hs);
+    MP_new(dh->pub_key);
+    MP_new(dh->priv_key);
+    MP_set(dh->pub_key, &dh->ctx.GX);
+    MP_set(dh->priv_key, &dh->ctx.X);
+    return 1;
 }
 
 static int MDH_compute_key(uint8_t *secret, size_t len, MP_t pub, MDH *dh)
 {
-  MP_set(&dh->ctx.GY, pub);
-  dhm_calc_secret(&dh->ctx, secret, &len);
-  return 0;
+    MP_set(&dh->ctx.GY, pub);
+    dhm_calc_secret(&dh->ctx, secret, &len);
+    return 0;
 }
 
 #elif defined(USE_GNUTLS)
@@ -95,11 +95,11 @@ typedef mpz_ptr MP_t;
 #define MP_getbin(u,buf,len)	u = malloc(sizeof(*u)); mpz_init2(u, 1); nettle_mpz_set_str_256_u(u,len,buf)
 
 typedef struct MDH {
-  MP_t p;
-  MP_t g;
-  MP_t pub_key;
-  MP_t priv_key;
-  long length;
+    MP_t p;
+    MP_t g;
+    MP_t pub_key;
+    MP_t priv_key;
+    long length;
 } MDH;
 
 #define	MDH_new()	calloc(1,sizeof(MDH))
@@ -107,60 +107,60 @@ typedef struct MDH {
 
 static int MDH_generate_key(MDH *dh)
 {
-  int num_bytes;
-  uint32_t seed;
-  gmp_randstate_t rs;
-
-  num_bytes = (mpz_sizeinbase(dh->p, 2) + 7) / 8 - 1;
-  if (num_bytes <= 0 || num_bytes > 18000)
-    return 0;
-
-  dh->priv_key = calloc(1, sizeof(*dh->priv_key));
-  if (!dh->priv_key)
-    return 0;
-  mpz_init2(dh->priv_key, 1);
-  gnutls_rnd(GNUTLS_RND_RANDOM, &seed, sizeof(seed));
-  gmp_randinit_mt(rs);
-  gmp_randseed_ui(rs, seed);
-  mpz_urandomb(dh->priv_key, rs, num_bytes);
-  gmp_randclear(rs);
-
-  dh->pub_key = calloc(1, sizeof(*dh->pub_key));
-  if (!dh->pub_key)
-    return 0;
-  mpz_init2(dh->pub_key, 1);
-  if (!dh->pub_key) {
-    mpz_clear(dh->priv_key);
-    free(dh->priv_key);
-    return 0;
-  }
-
-  mpz_powm(dh->pub_key, dh->g, dh->priv_key, dh->p);
-
-  return 1;
+    int num_bytes;
+    uint32_t seed;
+    gmp_randstate_t rs;
+    
+    num_bytes = (mpz_sizeinbase(dh->p, 2) + 7) / 8 - 1;
+    if (num_bytes <= 0 || num_bytes > 18000)
+        return 0;
+    
+    dh->priv_key = calloc(1, sizeof(*dh->priv_key));
+    if (!dh->priv_key)
+        return 0;
+    mpz_init2(dh->priv_key, 1);
+    gnutls_rnd(GNUTLS_RND_RANDOM, &seed, sizeof(seed));
+    gmp_randinit_mt(rs);
+    gmp_randseed_ui(rs, seed);
+    mpz_urandomb(dh->priv_key, rs, num_bytes);
+    gmp_randclear(rs);
+    
+    dh->pub_key = calloc(1, sizeof(*dh->pub_key));
+    if (!dh->pub_key)
+        return 0;
+    mpz_init2(dh->pub_key, 1);
+    if (!dh->pub_key) {
+        mpz_clear(dh->priv_key);
+        free(dh->priv_key);
+        return 0;
+    }
+    
+    mpz_powm(dh->pub_key, dh->g, dh->priv_key, dh->p);
+    
+    return 1;
 }
 
 static int MDH_compute_key(uint8_t *secret, size_t len, MP_t pub, MDH *dh)
 {
-  mpz_ptr k;
-  int num_bytes;
-
-  num_bytes = (mpz_sizeinbase(dh->p, 2) + 7) / 8;
-  if (num_bytes <= 0 || num_bytes > 18000)
-    return -1;
-
-  k = calloc(1, sizeof(*k));
-  if (!k)
-    return -1;
-  mpz_init2(k, 1);
-
-  mpz_powm(k, pub, dh->priv_key, dh->p);
-  nettle_mpz_get_str_256(len, secret, k);
-  mpz_clear(k);
-  free(k);
-
-  /* return the length of the shared secret key like DH_compute_key */
-  return len;
+    mpz_ptr k;
+    int num_bytes;
+    
+    num_bytes = (mpz_sizeinbase(dh->p, 2) + 7) / 8;
+    if (num_bytes <= 0 || num_bytes > 18000)
+        return -1;
+    
+    k = calloc(1, sizeof(*k));
+    if (!k)
+        return -1;
+    mpz_init2(k, 1);
+    
+    mpz_powm(k, pub, dh->priv_key, dh->p);
+    nettle_mpz_get_str_256(len, secret, k);
+    mpz_clear(k);
+    free(k);
+    
+    /* return the length of the shared secret key like DH_compute_key */
+    return len;
 }
 
 #else /* USE_OPENSSL */
@@ -196,114 +196,114 @@ typedef BIGNUM * MP_t;
 static int
 isValidPublicKey(MP_t y, MP_t p, MP_t q)
 {
-  int ret = TRUE;
-  MP_t bn;
-  assert(y);
-
-  MP_new(bn);
-  assert(bn);
-
-  /* y must lie in [2,p-1] */
-  MP_set_w(bn, 1);
-  if (MP_cmp(y, bn) < 0)
+    int ret = TRUE;
+    MP_t bn;
+    assert(y);
+    
+    MP_new(bn);
+    assert(bn);
+    
+    /* y must lie in [2,p-1] */
+    MP_set_w(bn, 1);
+    if (MP_cmp(y, bn) < 0)
     {
-      RTMP_Log(RTMP_LOGERROR, "DH public key must be at least 2");
-      ret = FALSE;
-      goto failed;
+        RTMP_Log(RTMP_LOGERROR, "DH public key must be at least 2");
+        ret = FALSE;
+        goto failed;
     }
-
-  /* bn = p-2 */
-  MP_set(bn, p);
-  MP_sub_w(bn, 1);
-  if (MP_cmp(y, bn) > 0)
+    
+    /* bn = p-2 */
+    MP_set(bn, p);
+    MP_sub_w(bn, 1);
+    if (MP_cmp(y, bn) > 0)
     {
-      RTMP_Log(RTMP_LOGERROR, "DH public key must be at most p-2");
-      ret = FALSE;
-      goto failed;
+        RTMP_Log(RTMP_LOGERROR, "DH public key must be at most p-2");
+        ret = FALSE;
+        goto failed;
     }
-
-  /* Verify with Sophie-Germain prime
-   *
-   * This is a nice test to make sure the public key position is calculated
-   * correctly. This test will fail in about 50% of the cases if applied to
-   * random data.
-   */
-  if (q)
+    
+    /* Verify with Sophie-Germain prime
+     *
+     * This is a nice test to make sure the public key position is calculated
+     * correctly. This test will fail in about 50% of the cases if applied to
+     * random data.
+     */
+    if (q)
     {
-      /* y must fulfill y^q mod p = 1 */
-      MP_modexp(bn, y, q, p);
-
-      if (MP_cmp_1(bn) != 0)
-	{
-	  RTMP_Log(RTMP_LOGWARNING, "DH public key does not fulfill y^q mod p = 1");
-	}
+        /* y must fulfill y^q mod p = 1 */
+        MP_modexp(bn, y, q, p);
+        
+        if (MP_cmp_1(bn) != 0)
+        {
+            RTMP_Log(RTMP_LOGWARNING, "DH public key does not fulfill y^q mod p = 1");
+        }
     }
-
+    
 failed:
-  MP_free(bn);
-  return ret;
+    MP_free(bn);
+    return ret;
 }
 
 static MDH *
 DHInit(int nKeyBits)
 {
-  size_t res;
-  MDH *dh = MDH_new();
-
-  if (!dh)
-    goto failed;
-
-  MP_new(dh->g);
-
-  if (!dh->g)
-    goto failed;
-
-  MP_gethex(dh->p, P1024, res);	/* prime P1024, see dhgroups.h */
-  if (!res)
+    size_t res;
+    MDH *dh = MDH_new();
+    
+    if (!dh)
+        goto failed;
+    
+    MP_new(dh->g);
+    
+    if (!dh->g)
+        goto failed;
+    
+    MP_gethex(dh->p, P1024, res);	/* prime P1024, see dhgroups.h */
+    if (!res)
     {
-      goto failed;
+        goto failed;
     }
-
-  MP_set_w(dh->g, 2);	/* base 2 */
-
-  dh->length = nKeyBits;
-  return dh;
-
+    
+    MP_set_w(dh->g, 2);	/* base 2 */
+    
+    dh->length = nKeyBits;
+    return dh;
+    
 failed:
-  if (dh)
-    MDH_free(dh);
-
-  return 0;
+    if (dh)
+        MDH_free(dh);
+    
+    return 0;
 }
 
 static int
 DHGenerateKey(MDH *dh)
 {
-  size_t res = 0;
-  if (!dh)
-    return 0;
-
-  while (!res)
+    size_t res = 0;
+    if (!dh)
+        return 0;
+    
+    while (!res)
     {
-      MP_t q1 = NULL;
-
-      if (!MDH_generate_key(dh))
-	return 0;
-
-      MP_gethex(q1, Q1024, res);
-      assert(res);
-
-      res = isValidPublicKey(dh->pub_key, dh->p, q1);
-      if (!res)
-	{
-	  MP_free(dh->pub_key);
-	  MP_free(dh->priv_key);
-	  dh->pub_key = dh->priv_key = 0;
-	}
-
-      MP_free(q1);
+        MP_t q1 = NULL;
+        
+        if (!MDH_generate_key(dh))
+            return 0;
+        
+        MP_gethex(q1, Q1024, res);
+        assert(res);
+        
+        res = isValidPublicKey(dh->pub_key, dh->p, q1);
+        if (!res)
+        {
+            MP_free(dh->pub_key);
+            MP_free(dh->priv_key);
+            dh->pub_key = dh->priv_key = 0;
+        }
+        
+        MP_free(q1);
     }
-  return 1;
+    return 1;
 }
 
 /* fill pubkey with the public key in BIG ENDIAN order
@@ -313,33 +313,33 @@ DHGenerateKey(MDH *dh)
 static int
 DHGetPublicKey(MDH *dh, uint8_t *pubkey, size_t nPubkeyLen)
 {
-  int len;
-  if (!dh || !dh->pub_key)
-    return 0;
-
-  len = MP_bytes(dh->pub_key);
-  if (len <= 0 || len > (int) nPubkeyLen)
-    return 0;
-
-  memset(pubkey, 0, nPubkeyLen);
-  MP_setbin(dh->pub_key, pubkey + (nPubkeyLen - len), len);
-  return 1;
+    int len;
+    if (!dh || !dh->pub_key)
+        return 0;
+    
+    len = MP_bytes(dh->pub_key);
+    if (len <= 0 || len > (int) nPubkeyLen)
+        return 0;
+    
+    memset(pubkey, 0, nPubkeyLen);
+    MP_setbin(dh->pub_key, pubkey + (nPubkeyLen - len), len);
+    return 1;
 }
 
 #if 0	/* unused */
 static int
 DHGetPrivateKey(MDH *dh, uint8_t *privkey, size_t nPrivkeyLen)
 {
-  if (!dh || !dh->priv_key)
-    return 0;
-
-  int len = MP_bytes(dh->priv_key);
-  if (len <= 0 || len > (int) nPrivkeyLen)
-    return 0;
-
-  memset(privkey, 0, nPrivkeyLen);
-  MP_setbin(dh->priv_key, privkey + (nPrivkeyLen - len), len);
-  return 1;
+    if (!dh || !dh->priv_key)
+        return 0;
+    
+    int len = MP_bytes(dh->priv_key);
+    if (len <= 0 || len > (int) nPrivkeyLen)
+        return 0;
+    
+    memset(privkey, 0, nPrivkeyLen);
+    MP_setbin(dh->priv_key, privkey + (nPrivkeyLen - len), len);
+    return 1;
 }
 #endif
 
@@ -348,29 +348,29 @@ DHGetPrivateKey(MDH *dh, uint8_t *privkey, size_t nPrivkeyLen)
  */
 static int
 DHComputeSharedSecretKey(MDH *dh, uint8_t *pubkey, size_t nPubkeyLen,
-			 uint8_t *secret)
+                         uint8_t *secret)
 {
-  MP_t q1 = NULL, pubkeyBn = NULL;
-  size_t len;
-  int res;
-
-  if (!dh || !secret || nPubkeyLen >= INT_MAX)
-    return -1;
-
-  MP_getbin(pubkeyBn, pubkey, nPubkeyLen);
-  if (!pubkeyBn)
-    return -1;
-
-  MP_gethex(q1, Q1024, len);
-  assert(len);
-
-  if (isValidPublicKey(pubkeyBn, dh->p, q1))
-    res = MDH_compute_key(secret, nPubkeyLen, pubkeyBn, dh);
-  else
-    res = -1;
-
-  MP_free(q1);
-  MP_free(pubkeyBn);
-
-  return res;
+    MP_t q1 = NULL, pubkeyBn = NULL;
+    size_t len;
+    int res;
+    
+    if (!dh || !secret || nPubkeyLen >= INT_MAX)
+        return -1;
+    
+    MP_getbin(pubkeyBn, pubkey, nPubkeyLen);
+    if (!pubkeyBn)
+        return -1;
+    
+    MP_gethex(q1, Q1024, len);
+    assert(len);
+    
+    if (isValidPublicKey(pubkeyBn, dh->p, q1))
+        res = MDH_compute_key(secret, nPubkeyLen, pubkeyBn, dh);
+    else
+        res = -1;
+    
+    MP_free(q1);
+    MP_free(pubkeyBn);
+    
+    return res;
 }

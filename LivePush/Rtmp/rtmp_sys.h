@@ -74,30 +74,30 @@
 #define	SSL_SET_SESSION(S,resume,timeout,ctx)	ssl_set_session(S,resume,timeout,ctx)
 #endif
 typedef struct tls_ctx {
-	havege_state hs;
-	ssl_session ssn;
+    havege_state hs;
+    ssl_session ssn;
 } tls_ctx;
 typedef struct tls_server_ctx {
-	havege_state *hs;
-	x509_cert cert;
-	rsa_context key;
-	ssl_session ssn;
-	const char *dhm_P, *dhm_G;
+    havege_state *hs;
+    x509_cert cert;
+    rsa_context key;
+    ssl_session ssn;
+    const char *dhm_P, *dhm_G;
 } tls_server_ctx;
 
 #define TLS_CTX tls_ctx *
 #define TLS_client(ctx,s)	s = malloc(sizeof(ssl_context)); ssl_init(s);\
-	ssl_set_endpoint(s, SSL_IS_CLIENT); ssl_set_authmode(s, SSL_VERIFY_NONE);\
-	ssl_set_rng(s, havege_random, &ctx->hs);\
-	ssl_set_ciphersuites(s, ssl_default_ciphersuites);\
-	SSL_SET_SESSION(s, 1, 600, &ctx->ssn)
+ssl_set_endpoint(s, SSL_IS_CLIENT); ssl_set_authmode(s, SSL_VERIFY_NONE);\
+ssl_set_rng(s, havege_random, &ctx->hs);\
+ssl_set_ciphersuites(s, ssl_default_ciphersuites);\
+SSL_SET_SESSION(s, 1, 600, &ctx->ssn)
 #define TLS_server(ctx,s)	s = malloc(sizeof(ssl_context)); ssl_init(s);\
-	ssl_set_endpoint(s, SSL_IS_SERVER); ssl_set_authmode(s, SSL_VERIFY_NONE);\
-	ssl_set_rng(s, havege_random, ((tls_server_ctx*)ctx)->hs);\
-	ssl_set_ciphersuites(s, ssl_default_ciphersuites);\
-	SSL_SET_SESSION(s, 1, 600, &((tls_server_ctx*)ctx)->ssn);\
-	ssl_set_own_cert(s, &((tls_server_ctx*)ctx)->cert, &((tls_server_ctx*)ctx)->key);\
-	ssl_set_dh_param(s, ((tls_server_ctx*)ctx)->dhm_P, ((tls_server_ctx*)ctx)->dhm_G)
+ssl_set_endpoint(s, SSL_IS_SERVER); ssl_set_authmode(s, SSL_VERIFY_NONE);\
+ssl_set_rng(s, havege_random, ((tls_server_ctx*)ctx)->hs);\
+ssl_set_ciphersuites(s, ssl_default_ciphersuites);\
+SSL_SET_SESSION(s, 1, 600, &((tls_server_ctx*)ctx)->ssn);\
+ssl_set_own_cert(s, &((tls_server_ctx*)ctx)->cert, &((tls_server_ctx*)ctx)->key);\
+ssl_set_dh_param(s, ((tls_server_ctx*)ctx)->dhm_P, ((tls_server_ctx*)ctx)->dhm_G)
 #define TLS_setfd(s,fd)	ssl_set_bio(s, net_recv, &fd, net_send, &fd)
 #define TLS_connect(s)	ssl_handshake(s)
 #define TLS_accept(s)	ssl_handshake(s)
@@ -109,8 +109,8 @@ typedef struct tls_server_ctx {
 #elif defined(USE_GNUTLS)
 #include <gnutls/gnutls.h>
 typedef struct tls_ctx {
-	gnutls_certificate_credentials_t cred;
-	gnutls_priority_t prios;
+    gnutls_certificate_credentials_t cred;
+    gnutls_priority_t prios;
 } tls_ctx;
 #define TLS_CTX	tls_ctx *
 #define TLS_client(ctx,s)	gnutls_init((gnutls_session_t *)(&s), GNUTLS_CLIENT); gnutls_priority_set(s, ctx->prios); gnutls_credentials_set(s, GNUTLS_CRD_CERTIFICATE, ctx->cred)
