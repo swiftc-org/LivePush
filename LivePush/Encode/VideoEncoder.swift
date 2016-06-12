@@ -23,7 +23,7 @@ final class VideoEncoder: NSObject {
                                                           nil,
                                                           attributes,
                                                           nil,
-                                                          callback, // or videoCompressonOutputCallback
+                                                          callback,
                                                           unsafeBitCast(self, UnsafeMutablePointer<Void>.self),
                                                           &encodeSession)
         
@@ -127,7 +127,7 @@ final class VideoEncoder: NSObject {
                                                                         &naluHeadLen)
         if status == noErr {
             // choice: true means sps. false means pps
-            let paraData = NSData(bytes: &paramSetPtr, length: paraSetSize)
+            let paraData = NSData(bytes: paramSetPtr, length: paraSetSize)
             return paraData
         } else {
             print("CMVideoFormatDescriptionGetH264ParameterSetAtIndex error:\(status)")
