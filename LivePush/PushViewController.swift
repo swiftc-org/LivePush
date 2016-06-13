@@ -73,11 +73,11 @@ class PushViewController: UIViewController, VideoEncoderDelegate {
     
     // MARK: - VideoEncoderDelegate
     func onVideoEncoderGet(sps sps: NSData, pps: NSData) {
-        print(#function)
+        
     }
     
-    func onVideoEncoderGet(video video: NSData, timeStamp: Double) {
-        print(#function)
+    func onVideoEncoderGet(video video: NSData, timeStamp: Double, isKeyFrame: Bool) {
+        
     }
     
     override func didReceiveMemoryWarning() {
