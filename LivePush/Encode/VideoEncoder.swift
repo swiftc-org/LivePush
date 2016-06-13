@@ -29,10 +29,11 @@ final class VideoEncoder: NSObject {
         
         guard encodeSession != nil else { return }
         
-        VTSessionSetProperty(encodeSession!, kVTCompressionPropertyKey_MaxKeyFrameInterval, 240)
         VTSessionSetProperty(encodeSession!, kVTCompressionPropertyKey_RealTime, kCFBooleanTrue)
         VTSessionSetProperty(encodeSession!, kVTCompressionPropertyKey_AllowFrameReordering, kCFBooleanFalse)
         VTSessionSetProperty(encodeSession!, kVTCompressionPropertyKey_ProfileLevel, kVTProfileLevel_H264_High_AutoLevel)
+        VTSessionSetProperty(encodeSession!, kVTCompressionPropertyKey_AverageBitRate, NSNumber(integer: defaultBitrate))
+        VTSessionSetProperty(encodeSession!, kVTCompressionPropertyKey_MaxKeyFrameInterval, NSNumber(integer: defaultFPS))
         
         VTCompressionSessionPrepareToEncodeFrames(encodeSession!)
         
@@ -52,7 +53,7 @@ final class VideoEncoder: NSObject {
     private var height = Int32(640)
     
     private let defaultFPS: Int = 30
-    private let defaultBitrate: UInt32 = 160 * 1024
+    private let defaultBitrate: Int = 160 * 1024
     private let defaultAttributes: [NSString: AnyObject] = [
         kCVPixelBufferPixelFormatTypeKey: Int(kCVPixelFormatType_32BGRA),
         kCVPixelBufferIOSurfacePropertiesKey: [:],
@@ -81,6 +82,8 @@ final class VideoEncoder: NSObject {
         encoder.handleEncodedSampleBuffer(sampleBuffer!)
     }
     
+    private var has_send_sps_pps = false
+    
     private func handleEncodedSampleBuffer(sampleBuffer: CMSampleBuffer) {
         
         let keyFrame = sampleBuffer.isKeyFrame
@@ -91,7 +94,14 @@ final class VideoEncoder: NSObject {
             sps = get_sps_or_pps(by: true, sampleBuffer: sampleBuffer)
             pps = get_sps_or_pps(by: false, sampleBuffer: sampleBuffer)
             
-            //delegate?.onVideoEncoderGet(sps: sps, pps: pps)
+            if !has_send_sps_pps { // ensure send once
+                guard sps != nil && pps != nil else {
+                    print("sps or pps is nil")
+                    return
+                }
+                delegate?.onVideoEncoderGet(sps: sps!, pps: pps!)
+                has_send_sps_pps = true
+            }
         }
         
         getEncodedData(sampleBuffer)
@@ -177,10 +187,17 @@ final class VideoEncoder: NSObject {
             buffer.appendBytes(&data, length: data.count)
             buffer.appendBytes(dataPointer, length: totalLen)
             
-            delegate?.onVideoEncoderGet(video: buffer, timeStamp: delta)
+            let keyFrame = sampleBuffer.isKeyFrame
+            guard keyFrame != nil else {
+                print("keyFrame is nil")
+                return
+            }
+            
+            delegate?.onVideoEncoderGet(video: buffer, timeStamp: delta, isKeyFrame: keyFrame!)
             videoTimeStamp = dts
             
         } else {
+            print(#function, "CMBlockBufferGetDataPointer failed")
             return
         }
     }
