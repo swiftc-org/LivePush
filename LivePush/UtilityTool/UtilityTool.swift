@@ -42,6 +42,20 @@ func printHexOfPointer(ptr: UnsafePointer<Void>, length: Int) {
     }
 }
 
+func Log(items: Any...,
+         fileName: String = #file,
+         funcName: String = #function,
+         lineNum: Int = #line) {
+    
+    if items.count == 0 {
+        print(funcName, lineNum)
+        //print(fileName, funcName, lineNum)
+    } else {
+        print(funcName, lineNum, items)
+        //print(fileName, funcName, lineNum, items)
+    }
+}
+
 extension NSData {
     
     subscript(index: Int) -> UInt8 {
