@@ -5175,3 +5175,123 @@ RTMP_Write(RTMP *r, const char *buf, int size)
     }
     return size+s2;
 }
+
+/* extention for send h264 */
+#define RTMP_HEAD_SIZE   (sizeof(RTMPPacket)+RTMP_MAX_HEADER_SIZE)
+
+int rtmp_send_sps_pps(RTMP * const rtmp,
+                      unsigned char const *sps,
+                      unsigned int const sps_len,
+                      unsigned char const *pps,
+                      unsigned int const pps_len)
+{
+    RTMPPacket * packet;
+    unsigned char * body;
+    int i;
+    
+    packet = (RTMPPacket *)malloc(RTMP_HEAD_SIZE+1024); // TODO: change 1024
+    memset(packet,0,RTMP_HEAD_SIZE);
+    
+    packet->m_body = (char *)packet + RTMP_HEAD_SIZE;
+    body = (unsigned char *)packet->m_body;
+    
+    //    memcpy(winsys->pps,buf,len);
+    //    winsys->pps_len = len;
+    
+    i = 0;
+    body[i++] = 0x17;
+    body[i++] = 0x00;
+    
+    body[i++] = 0x00;
+    body[i++] = 0x00;
+    body[i++] = 0x00;
+    
+    /*AVCDecoderConfigurationRecord*/
+    body[i++] = 0x01;
+    body[i++] = sps[1];
+    body[i++] = sps[2];
+    body[i++] = sps[3];
+    body[i++] = 0xff;
+    
+    /*sps*/
+    body[i++]   = 0xe1;
+    body[i++] = (sps_len >> 8) & 0xff;
+    body[i++] = sps_len & 0xff;
+    memcpy(&body[i],sps,sps_len);
+    i +=  sps_len;
+    
+    /*pps*/
+    body[i++]   = 0x01;
+    body[i++] = (pps_len >> 8) & 0xff;
+    body[i++] = (pps_len) & 0xff;
+    memcpy(&body[i],pps,pps_len);
+    i +=  pps_len;
+    
+    packet->m_packetType = RTMP_PACKET_TYPE_VIDEO;
+    packet->m_nBodySize = i;
+    packet->m_nChannel = 0x04;
+    packet->m_nTimeStamp = 0;
+    packet->m_hasAbsTimestamp = 0;
+    packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
+    packet->m_nInfoField2 = rtmp->m_stream_id;
+    
+    // 0 means failed, 1 means success
+    int result = RTMP_SendPacket(rtmp,packet,TRUE);
+    free(packet);
+    
+    return result;
+}
+
+int rtmp_send_video(RTMP * const rtmp,
+                    unsigned char const *video,
+                    unsigned int const video_len,
+                    _Bool isKeyFrame,
+                    unsigned int timeOffset)
+{
+    uint32_t timeoffset;
+    RTMPPacket * packet;
+    unsigned char * body;
+    
+    packet = (RTMPPacket *)malloc(RTMP_HEAD_SIZE+video_len+9);
+    memset(packet, 0, RTMP_HEAD_SIZE);
+    
+    packet->m_body = (char *)packet + RTMP_HEAD_SIZE;
+    packet->m_nBodySize = video_len + 9;
+    
+    /*send video packet*/
+    body = (unsigned char *)packet->m_body;
+    memset(body, 0, video_len+9);
+    
+    /*key frame*/
+    if (isKeyFrame) {
+        body[0] = 0x17;
+    } else {
+        body[0] = 0x27;
+    }
+    
+    body[1] = 0x01;   /*nal unit*/
+    body[2] = 0x00;
+    body[3] = 0x00;
+    body[4] = 0x00;
+    
+    body[5] = (video_len >> 24) & 0xff;
+    body[6] = (video_len >> 16) & 0xff;
+    body[7] = (video_len >>  8) & 0xff;
+    body[8] = (video_len ) & 0xff;
+    
+    /*copy data*/
+    memcpy(&body[9],video,video_len);
+    
+    packet->m_hasAbsTimestamp = 0;
+    packet->m_packetType = RTMP_PACKET_TYPE_VIDEO;
+    packet->m_nInfoField2 = rtmp->m_stream_id;
+    packet->m_nChannel = 0x04;
+    packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
+    packet->m_nTimeStamp = timeoffset;
+    
+    /*调用发送接口*/
+    int result = RTMP_SendPacket(rtmp,packet,TRUE);
+    free(packet);
+    
+    return result;
+}

@@ -375,6 +375,22 @@ extern "C"
     int RTMP_HashSWF(const char *url, unsigned int *size, unsigned char *hash,
                      int age);
     
+    /* extention for send h264 */
+    
+    // return 0 means failed, 1 means success
+    int rtmp_send_sps_pps(RTMP * const rtmp,
+                          unsigned char const *sps,
+                          unsigned int const sps_len,
+                          unsigned char const *pps,
+                          unsigned int const pps_len);
+    
+    // return 0 means failed, 1 means success
+    int rtmp_send_video(RTMP * const rtmp,
+                        unsigned char const *video,
+                        unsigned int const video_len,
+                        _Bool isKeyFrame,
+                        unsigned int timeOffset);
+    
 #ifdef __cplusplus
 };
 #endif
