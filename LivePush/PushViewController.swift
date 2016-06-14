@@ -17,6 +17,10 @@ class PushViewController: UIViewController, VideoEncoderDelegate {
     private let vEncoder = VideoEncoder()
     private let aEncoder = AudioEncoder()
     
+    private let rtmpClient = RTMPClient()
+    //private let urlStr = "rtmp://swiftc.org/live/livestream"
+    private let urlStr = "rtmp://192.168.1.104/live/livestream"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -30,6 +34,12 @@ class PushViewController: UIViewController, VideoEncoderDelegate {
         vCapture.output { (sampleBuffer) in
             
             self.handleVideoSampleBuffer(sampleBuffer)
+        }
+        
+        if rtmpClient.connect(urlStr) {
+            print("rtmp connect success, let's go on")
+        } else {
+            print("rtmp connect failed, check it")
         }
         
         aCapture.startSession()
@@ -67,11 +77,11 @@ class PushViewController: UIViewController, VideoEncoderDelegate {
     
     // MARK: - VideoEncoderDelegate
     func onVideoEncoderGet(sps sps: NSData, pps: NSData) {
-        
+        rtmpClient.send(sps: sps, pps: pps)
     }
     
     func onVideoEncoderGet(video video: NSData, timeStamp: Double, isKeyFrame: Bool) {
-        
+        rtmpClient.send(video: video, timeStamp: timeStamp, isKeyFrame: isKeyFrame)
     }
     
     override func didReceiveMemoryWarning() {
