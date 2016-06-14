@@ -27,8 +27,6 @@ class PushViewController: UIViewController, VideoEncoderDelegate {
         
         vCapture.startSession()
         
-        // CVPixelBuffer == CVImageBuffer == CVBuffer
-        
         vCapture.output { (sampleBuffer) in
             
             self.handleVideoSampleBuffer(sampleBuffer)
@@ -40,10 +38,6 @@ class PushViewController: UIViewController, VideoEncoderDelegate {
             
             self.handleAudioSampleBuffer(sampleBuffer)
         }
-        
-//        performSelector(#selector(stopCapture),
-//                        withObject: nil,
-//                        afterDelay: 5.0)
     }
     
     private func handleVideoSampleBuffer(sampleBuffer: CMSampleBuffer) {
