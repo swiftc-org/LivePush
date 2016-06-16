@@ -208,13 +208,13 @@ class RTMPClient {
         //print("isKeyFrame:\(isKeyFrame)")
         
         let timeOffset = NSDate().timeIntervalSince1970 - startTime
-        print("timeOffset:\(UInt32(timeOffset*1000))")
+        //print("timeOffset:\(UInt32(timeOffset))")
         
         let result = rtmp_send_video(rtmp,
                                      UnsafePointer<UInt8>(video.bytes),
                                      UInt32(video.length),
                                      isKeyFrame,
-                                     UInt32(timeOffset*1000))
+                                     UInt32(timeOffset))
         
         // 0 means failed, 1 means success
         if result == 0 {
