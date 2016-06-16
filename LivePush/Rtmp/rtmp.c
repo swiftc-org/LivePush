@@ -5294,3 +5294,80 @@ int rtmp_send_video(RTMP * const rtmp,
     
     return result;
 }
+
+/* extension for aac */
+
+int rtmp_send_audio_head(RTMP * const rtmp,
+                         unsigned char const *head,
+                         unsigned int const head_len) {
+    
+    RTMPPacket * packet;
+    unsigned char * body;
+    int len;
+    
+    len = head_len;  /*spec data长度,一般是2*/
+    
+    packet = (RTMPPacket *)malloc(RTMP_HEAD_SIZE+len+2);
+    memset(packet, 0, RTMP_HEAD_SIZE);
+    
+    packet->m_body = (char *)packet + RTMP_HEAD_SIZE;
+    body = (unsigned char *)packet->m_body;
+    
+    // <af0100cc 4007>
+    // mChannelsPerFrame == channelCount
+    // sampleRateIndex depends out.mSampleRate;
+    // http://wiki.multimedia.cx/index.php?title=MPEG-4_Audio#Audio_Specific_Config
+    // m_asc[0] = 0x10 | ((sampleRateIndex>>1) & 0x3);
+    // m_asc[1] = ((sampleRateIndex & 0x1)<<7) | ((channelCount & 0xF) << 3);
+    
+    /*AF 00 + AAC RAW data*/
+    body[0] = 0xAF;
+    body[1] = 0x00;
+    memcpy(&body[2], head, len); /*spec_buf是AAC sequence header数据*/
+    
+    packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
+    packet->m_nBodySize = len+2;
+    packet->m_nChannel = 0x04;
+    packet->m_nTimeStamp = 0;
+    packet->m_hasAbsTimestamp = 0;
+    packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
+    packet->m_nInfoField2 = rtmp->m_stream_id;
+    
+    int result = RTMP_SendPacket(rtmp, packet, TRUE);
+    free(packet);
+    
+    return result;
+}
+
+int rtmp_send_audio(RTMP * const rtmp,
+                    unsigned char const *audio,
+                    unsigned int const audio_len,
+                    unsigned int timeOffset) {
+    
+    RTMPPacket * packet;
+    unsigned char * body;
+    
+    packet = (RTMPPacket *)malloc(RTMP_HEAD_SIZE+audio_len+2);
+    memset(packet, 0, RTMP_HEAD_SIZE);
+    
+    packet->m_body = (char *)packet + RTMP_HEAD_SIZE;
+    body = (unsigned char *)packet->m_body;
+    
+    /*AF 01 + AAC RAW data*/
+    body[0] = 0xAF;
+    body[1] = 0x01;
+    memcpy(&body[2], audio, audio_len);
+    
+    packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
+    packet->m_nBodySize = audio_len + 2;
+    packet->m_nChannel = 0x04;
+    packet->m_nTimeStamp = timeOffset;
+    packet->m_hasAbsTimestamp = 0;
+    packet->m_headerType = RTMP_PACKET_SIZE_MEDIUM;
+    packet->m_nInfoField2 = rtmp->m_stream_id;
+    
+    int result = RTMP_SendPacket(rtmp, packet, TRUE);
+    free(packet);
+    
+    return result;
+}

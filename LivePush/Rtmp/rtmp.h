@@ -391,6 +391,20 @@ extern "C"
                         _Bool isKeyFrame,
                         unsigned int timeOffset);
     
+    /* extension for aac */
+    
+    // send AudioDecoderSpecificInfo (AAC sequence header)
+    // return values's meaning is same as rtmp_send_video
+    int rtmp_send_audio_head(RTMP * const rtmp,
+                             unsigned char const *head,
+                             unsigned int const head_len);
+    
+    // send audio data, return values's meaning is same as up
+    int rtmp_send_audio(RTMP * const rtmp,
+                        unsigned char const *audio,
+                        unsigned int const audio_len,
+                        unsigned int timeOffset);
+    
 #ifdef __cplusplus
 };
 #endif
