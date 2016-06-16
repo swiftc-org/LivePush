@@ -89,6 +89,7 @@ class RTMPClient {
         
         guard isConnected else {
             print("rtmp is not connected")
+            close()
             return false
         }
         
@@ -195,6 +196,7 @@ class RTMPClient {
         
         guard isConnected else {
             print("rtmp is not connected")
+            close()
             return false
         }
         
@@ -294,6 +296,7 @@ class RTMPClient {
         
         guard isConnected else {
             print("rtmp is not connected")
+            close()
             return
         }
         
