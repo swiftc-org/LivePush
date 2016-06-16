@@ -42,16 +42,18 @@ class PushViewController: UIViewController, VideoEncoderDelegate {
             self.handleVideoSampleBuffer(sampleBuffer)
         }
         
+        if rtmpClient.connect(urlStr) {
+            print("rtmp connect success, let's go on")
+        } else {
+            print("rtmp connect failed, check it")
+        }
+        
         aCapture.startSession()
         
         aCapture.output { (sampleBuffer) in
             
             self.handleAudioSampleBuffer(sampleBuffer)
         }
-        
-//        performSelector(#selector(stopCapture),
-//                        withObject: nil,
-//                        afterDelay: 5.0)
     }
     
     private func handleVideoSampleBuffer(sampleBuffer: CMSampleBuffer) {

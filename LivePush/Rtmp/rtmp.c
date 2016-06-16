@@ -4307,7 +4307,7 @@ RTMPSockBuf_Send(RTMPSockBuf *sb, const char *buf, int len)
     {
         rc = (int)send(sb->sb_socket, buf, len, 0);
         if (rc == -1) {
-            RTMP_Log(RTMP_LOGERROR, "%s", strerror(errno));
+            RTMP_Log(RTMP_LOGERROR, "%s, %s", __FUNCTION__, strerror(errno));
         }
     }
     return rc;
