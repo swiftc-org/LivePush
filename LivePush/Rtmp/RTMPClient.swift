@@ -10,9 +10,9 @@ import UIKit
 
 class RTMPClient {
     
-    //private var urlStr: String!
     private let rtmp = RTMP_Alloc()
-    private var startTime: Double!
+    private var startTimeV: Double!
+    private var startTimeA: Double!
     
     var isConnected: Bool {
         
@@ -105,7 +105,7 @@ class RTMPClient {
                                        UnsafePointer<UInt8>(pps.bytes),
                                        UInt32(ppsLen))
         
-        startTime = NSDate().timeIntervalSince1970
+        startTimeV = NSDate().timeIntervalSince1970
         
         // 0 means failed, 1 means success
         if result == 0 {
@@ -200,7 +200,7 @@ class RTMPClient {
             return false
         }
         
-        guard startTime != nil else {
+        guard startTimeV != nil else {
             print("sps and pps has not been send succeed")
             return false
         }
@@ -209,7 +209,7 @@ class RTMPClient {
         //print("timeStamp:\(timeStamp)")
         //print("isKeyFrame:\(isKeyFrame)")
         
-        let timeOffset = NSDate().timeIntervalSince1970 - startTime
+        let timeOffset = NSDate().timeIntervalSince1970 - startTimeV
         //print("timeOffset:\(UInt32(timeOffset))")
         
         let result = rtmp_send_video(rtmp,
@@ -290,6 +290,36 @@ class RTMPClient {
         }*/
     }
 
+    func sendAACHead() {
+        
+        let audioHead: [UInt8] = [0x12, 0x10]
+        let audioHeadData = NSData(bytes: audioHead, length: audioHead.count)
+        
+        rtmp_send_audio_head(rtmp,
+                             UnsafePointer<UInt8>(audioHeadData.bytes),
+                             UInt32(audioHeadData.length))
+        startTimeA = NSDate().timeIntervalSince1970 * 1000
+    }
+    
+    func send(audio audio: NSData) {
+        
+        guard isConnected else {
+            print("rtmp is not connected")
+            return
+        }
+        
+        guard startTimeA != nil else {
+            print("sps and pps has not been send succeed")
+            return
+        }
+        
+        let timeOffset = (NSDate().timeIntervalSince1970 - startTimeA) * 1000
+        
+        rtmp_send_audio(rtmp,
+                        UnsafePointer<UInt8>(audio.bytes),
+                        UInt32(audio.length),
+                        UInt32(timeOffset))
+    }
     
     /// just for push flv file, can't used for H264 and AAC stream
     func push(data: NSData) {
