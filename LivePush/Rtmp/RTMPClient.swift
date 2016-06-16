@@ -65,6 +65,16 @@ class RTMPClient {
             return false
         }
         
+        // Prevent SIGPIPE signals
+        var nosigpipe = 1
+        let nosigpipeLen = UInt32(sizeof(nosigpipe.dynamicType))
+        setsockopt(rtmp.memory.m_sb.sb_socket,
+                   SOL_SOCKET,
+                   SO_NOSIGPIPE,
+                   &nosigpipe,
+                   nosigpipeLen)
+        
+        
         let streamResult = RTMP_ConnectStream(rtmp, 0)
         guard streamResult != 0 else {
             print("RTMP_ConnectStream failed")
