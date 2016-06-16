@@ -5248,7 +5248,6 @@ int rtmp_send_video(RTMP * const rtmp,
                     _Bool isKeyFrame,
                     unsigned int timeOffset)
 {
-    uint32_t timeoffset;
     RTMPPacket * packet;
     unsigned char * body;
     
@@ -5287,7 +5286,7 @@ int rtmp_send_video(RTMP * const rtmp,
     packet->m_nInfoField2 = rtmp->m_stream_id;
     packet->m_nChannel = 0x04;
     packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
-    packet->m_nTimeStamp = timeoffset;
+    packet->m_nTimeStamp = timeOffset;
     
     /*调用发送接口*/
     int result = RTMP_SendPacket(rtmp,packet,TRUE);
