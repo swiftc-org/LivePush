@@ -9,7 +9,7 @@
 import UIKit
 import CoreMedia
 
-class PushViewController: UIViewController, VideoEncoderDelegate {
+class PushViewController: UIViewController, VideoEncoderDelegate, AudioEncoderDelegate {
 
     private let vCapture = VideoCapture()
     private let aCapture = AudioCapture()
@@ -31,9 +31,13 @@ class PushViewController: UIViewController, VideoEncoderDelegate {
         
         if rtmpClient.connect(urlStr) {
             print("rtmp connect success, let's go on")
+            rtmpClient.sendAACHead()
         } else {
             print("rtmp connect failed, check it")
         }
+        
+        vEncoder.delegate = self
+        aEncoder.delegate = self
         
         vCapture.startSession()
         
@@ -42,7 +46,7 @@ class PushViewController: UIViewController, VideoEncoderDelegate {
             self.handleVideoSampleBuffer(sampleBuffer)
         }
         
-        aCapture.startSession()
+        //aCapture.startSession()
         
         aCapture.output { (sampleBuffer) in
             
@@ -59,7 +63,6 @@ class PushViewController: UIViewController, VideoEncoderDelegate {
         let timeStamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
         let duration = CMSampleBufferGetDuration(sampleBuffer)
         
-        vEncoder.delegate = self
         vEncoder.encode(imageBuffer: imageBuffer!,
                         presentationTimeStamp: timeStamp,
                         presentationDuration: duration)
@@ -82,6 +85,11 @@ class PushViewController: UIViewController, VideoEncoderDelegate {
     
     func onVideoEncoderGet(video video: NSData, timeStamp: Double, isKeyFrame: Bool) {
         rtmpClient.send(video: video, timeStamp: timeStamp, isKeyFrame: isKeyFrame)
+    }
+    
+    // MARK: - AudioEncoderDelegate
+    func onAudioEncoderGet(audio: NSData) {
+        rtmpClient.send(audio: audio)
     }
     
     override func didReceiveMemoryWarning() {

@@ -12,13 +12,9 @@ import AudioToolbox
 /// encode to AAC (Advanced Audio Coding)
 final class AudioEncoder: NSObject {
     
-    //private var audioQueue: AudioQueueRef!
-    
     // in means input, out means output audio stream
     private var inSourceFormat: AudioStreamBasicDescription!
-//    private var inTargetFormat: AudioStreamBasicDescription!
     private var currentBufferList: AudioBufferList?
-    //private var converter: AudioConverterRef?
     private var formatDescription: CMFormatDescription?
     
     private var audioQueue: dispatch_queue_t {
@@ -27,14 +23,14 @@ final class AudioEncoder: NSObject {
         return queue
     } // TODO: not used
     
-    private var inClasseDescps: [AudioClassDescription] = [
+    private var requestedDescps: [AudioClassDescription] = [
         
         AudioClassDescription(mType: kAudioEncoderComponentType,
-                              mSubType: kAudioFormatMPEG4AAC,
-                              mManufacturer: kAppleHardwareAudioCodecManufacturer),
+            mSubType: kAudioFormatMPEG4AAC,
+            mManufacturer: kAppleHardwareAudioCodecManufacturer),
         AudioClassDescription(mType: kAudioEncoderComponentType,
-                              mSubType: kAudioFormatMPEG4AAC,
-                              mManufacturer: kAppleHardwareAudioCodecManufacturer)
+            mSubType: kAudioFormatMPEG4AAC,
+            mManufacturer: kAppleHardwareAudioCodecManufacturer)
     ]
     
     private let inputDataProc: AudioConverterComplexInputDataProc = {(
@@ -45,7 +41,9 @@ final class AudioEncoder: NSObject {
         inUserData: UnsafeMutablePointer<Void>) in
         
         let encoder = unsafeBitCast(inUserData, AudioEncoder.self)
-        return encoder.copeWith(ioNumberDataPackets, ioData, outDataPacketDescription)
+        return encoder.copeWith(ioNumberDataPackets,
+                                ioData: ioData,
+                                outDataPacketDescription: outDataPacketDescription)
     }
     
     private var inTargetFormat: AudioStreamBasicDescription {
@@ -53,7 +51,7 @@ final class AudioEncoder: NSObject {
         get {
             var format = AudioStreamBasicDescription(mSampleRate: self.inSourceFormat.mSampleRate,
                                                      mFormatID: kAudioFormatMPEG4AAC,
-                                                     mFormatFlags: UInt32(MPEG4ObjectID.AAC_LC.rawValue),
+                                                     mFormatFlags: UInt32(MPEG4ObjectID.AAC_Main.rawValue),
                                                      mBytesPerPacket: 0,
                                                      mFramesPerPacket: 1024,
                                                      mBytesPerFrame: 0,
@@ -85,47 +83,58 @@ final class AudioEncoder: NSObject {
         // inSourceFormat must be from input sampleBuffer
         guard self.inSourceFormat != nil else { return nil }
         
-        var cvr: AudioConverterRef = nil
+        var aconverter: AudioConverterRef = nil
         let result = AudioConverterNewSpecific(&self.inSourceFormat!,
                                                &self.inTargetFormat,
-                                               UInt32(self.inClasseDescps.count),
-                                               &self.inClasseDescps,
-                                               &cvr)
+                                               UInt32(self.requestedDescps.count),
+                                               &self.requestedDescps,
+                                               &aconverter)
         if result == noErr {
+            
             print("AudioConverterNewSpecific success")
-            return cvr
+            AudioConverterSetProperty(aconverter,
+                                      kAudioConverterEncodeBitRate,
+                                      UInt32(sizeof(UInt32)),
+                                      &self.bitrate)
+            return aconverter
         } else {
             print("AudioConverterNewSpecific Error")
             return nil
         }
-    }() // to ensure set only once
+        }() // to ensure set only once
     
     private func copeWith(ioNumberDataPackets: UnsafeMutablePointer<UInt32>,
-                          _ ioData: UnsafeMutablePointer<AudioBufferList>,
-                          _ outDataPacketDescription:
-        UnsafeMutablePointer<UnsafeMutablePointer<AudioStreamPacketDescription>>) -> OSStatus {
-        
-        // inSourceFormat may fail set in init
-        if currentBufferList == nil || inSourceFormat == nil {
-            ioNumberDataPackets.memory = 0
-            return 100 // TODO: what is 100 means
-        }
-        
-        let numBytes: UInt32 = min(ioNumberDataPackets.memory * inSourceFormat!.mBytesPerPacket,
-                                   currentBufferList!.mBuffers.mDataByteSize)
-        
-        ioData.memory.mBuffers.mData = currentBufferList!.mBuffers.mData
-        ioData.memory.mBuffers.mDataByteSize = numBytes
-        ioNumberDataPackets.memory = numBytes / inSourceFormat!.mBytesPerPacket
-        currentBufferList = nil
-        
-        return noErr
+                          ioData: UnsafeMutablePointer<AudioBufferList>,
+                          outDataPacketDescription:
+        UnsafeMutablePointer<UnsafeMutablePointer<AudioStreamPacketDescription>>)
+        -> OSStatus {
+            
+            // inSourceFormat may fail set in init
+            if currentBufferList == nil || inSourceFormat == nil {
+                ioNumberDataPackets.memory = 0
+                return 1024 // 100 means something wrong, just different from noErr (value is 0)
+            }
+            
+            let numBytes: UInt32 = min(ioNumberDataPackets.memory * inSourceFormat!.mBytesPerPacket,
+                                       currentBufferList!.mBuffers.mDataByteSize)
+            
+            ioData.memory.mBuffers.mData = currentBufferList!.mBuffers.mData
+            ioData.memory.mBuffers.mDataByteSize = numBytes
+            ioNumberDataPackets.memory = numBytes / inSourceFormat!.mBytesPerPacket
+            currentBufferList = nil
+            
+            return noErr
     }
     
     override init() {
         super.init()
         
     }
+    
+    var bitrate = Int()
+    weak var delegate: AudioEncoderDelegate?
+    
+    private var audioTimestamp = kCMTimeZero
     
     func encode(sampleBuffer sampleBuffer: CMSampleBuffer) {
         
@@ -144,7 +153,7 @@ final class AudioEncoder: NSObject {
                                                                 nil,
                                                                 nil,
                                                                 0,
-                                                                &blockBuffer) // TODO: 释放
+                                                                &blockBuffer) // can't be nil, or the audioData will empty
         var ioOutputDataPacketSize = UInt32(1)
         
         guard converter != nil else { return }
@@ -162,12 +171,14 @@ final class AudioEncoder: NSObject {
         var audioBufferList = AudioBufferList(mNumberBuffers: 1,
                                               mBuffers: audioBuffer)
         
+        var outPacketDescription = AudioStreamPacketDescription()
+        
         let result = AudioConverterFillComplexBuffer(converter!,
                                                      inputDataProc,
                                                      unsafeBitCast(self, UnsafeMutablePointer<Void>.self),
                                                      &ioOutputDataPacketSize,
                                                      &audioBufferList,
-                                                     nil)
+                                                     &outPacketDescription)
         if result == noErr {
             var sbuf: CMSampleBuffer?
             var timming = CMSampleTimingInfo()
@@ -186,13 +197,36 @@ final class AudioEncoder: NSObject {
                                  nil,
                                  &sbuf)
             
+            let audioDataLen = audioBufferList.mBuffers.mDataByteSize
+            let audioData = NSData(bytes: audioBufferList.mBuffers.mData, length: Int(audioDataLen))
+            //print("audioData:\(audioData)")
+            
+            delegate?.onAudioEncoderGet(audioData)
+            
+            //print("outPacketDescription:\(outPacketDescription)")
+            
             CMSampleBufferSetDataBufferFromAudioBufferList(sbuf!,
                                                            kCFAllocatorDefault,
                                                            kCFAllocatorDefault,
                                                            0,
                                                            &audioBufferList)
             
-            //print("sampleb:\(sbuf!)")
+            let presentTimeStamp = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+            
+            //let durationTimeStamp = CMSampleBufferGetDuration(sampleBuffer)
+            
+            //let delta = CMTimeGetSeconds(presentTimeStamp) - CMTimeGetSeconds(audioTimestamp)
+            //let timeStamp: Double = (audioTimestamp == kCMTimeZero ? 0 : delta) * 1000
+            //let timeStamp: Double = audioTimestamp == kCMTimeZero ? 0 : delta
+            
+            //print("\(NSDate())--presentTimeStamp:\(CMTimeGetSeconds(presentTimeStamp))")
+            //print("\(NSDate())--delta           :\(delta)")
+            
+            //print("\(NSDate())--durationTimeStam:\(CMTimeGetSeconds(durationTimeStamp))")
+            
+            audioTimestamp = presentTimeStamp
+            //print("\(NSDate())--timestamep:\(CMTimeGetSeconds(presentTimeStamp))")
+            
         } else {
             print("AudioConverterFillComplexBuffer Failed")
         }

@@ -10,7 +10,7 @@ import UIKit
 import CoreMedia
 
 protocol AudioEncoderDelegate: class {
-    
+    func onAudioEncoderGet(audio: NSData)
 }
 
 protocol VideoEncoderDelegate: class {
