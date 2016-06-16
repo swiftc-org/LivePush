@@ -5263,9 +5263,9 @@ int rtmp_send_video(RTMP * const rtmp,
     
     /*key frame*/
     if (isKeyFrame) {
-        body[0] = 0x17;
+        body[0] = 0x17; // 1:Iframe 7:AVC
     } else {
-        body[0] = 0x27;
+        body[0] = 0x27; // 2:Pframe 7:AVC
     }
     
     body[1] = 0x01;   /*nal unit*/
