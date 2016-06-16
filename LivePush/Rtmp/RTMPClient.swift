@@ -298,7 +298,7 @@ class RTMPClient {
         rtmp_send_audio_head(rtmp,
                              UnsafePointer<UInt8>(audioHeadData.bytes),
                              UInt32(audioHeadData.length))
-        startTimeA = NSDate().timeIntervalSince1970 * 1000
+        startTimeA = NSDate().timeIntervalSince1970
     }
     
     func send(audio audio: NSData) {
@@ -313,7 +313,7 @@ class RTMPClient {
             return
         }
         
-        let timeOffset = (NSDate().timeIntervalSince1970 - startTimeA) * 1000
+        let timeOffset = NSDate().timeIntervalSince1970 - startTimeA
         
         rtmp_send_audio(rtmp,
                         UnsafePointer<UInt8>(audio.bytes),
