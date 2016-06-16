@@ -18,7 +18,8 @@ class PushViewController: UIViewController, VideoEncoderDelegate {
     private let aEncoder = AudioEncoder()
     
     private let rtmpClient = RTMPClient()
-    private let urlStr = "rtmp://swiftc.org/live/livestream"
+    //private let urlStr = "rtmp://swiftc.org/live/livestream"
+    private let urlStr = "rtmp://192.168.1.107/live/livestream"
     
     override func viewDidLoad() {
         super.viewDidLoad()
