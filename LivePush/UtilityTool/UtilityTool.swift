@@ -32,7 +32,7 @@ func printHexOfPointer(ptr: UnsafePointer<Void>, length: Int) {
         
         print(hexStr, terminator: "")
         
-        if i != 0 && (i+1) % 4 == 0 {
+        if i != 0 && i != length && (i+1) % 4 == 0 {
             print(" ", terminator: "")
         }
         
